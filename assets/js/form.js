@@ -1,6 +1,10 @@
 (function () {
   'use strict';
 
+  const DEFAULT_TEXT_MAXLENGTH = 200;
+  const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+
   const educationLevels = [
     { th: 'ประถมศึกษา', en: 'Primary School' },
     { th: 'มัธยมศึกษา', en: 'Secondary' },
@@ -136,7 +140,10 @@
     for (let c = 0; c < colCount; c++) {
       const type = placeholders && placeholders[c] && placeholders[c].type ? placeholders[c].type : 'text';
       const placeholder = placeholders && placeholders[c] ? placeholders[c].label : '';
-      html += `<td><input type="${type}" name="${tableId}_${rowIndex}_${c}" placeholder="${placeholder}"></td>`;
+      let extra = ` maxlength="${DEFAULT_TEXT_MAXLENGTH}"`;
+      if (type === 'tel') extra = ' pattern="0[0-9]{8,9}" maxlength="10" inputmode="numeric"';
+      else if (type === 'number') extra = '';
+      html += `<td><input type="${type}" name="${tableId}_${rowIndex}_${c}" placeholder="${placeholder}"${extra}></td>`;
     }
     html += '<td><button type="button" class="remove-row" title="ลบแถว / Remove row">&times;</button></td>';
     tr.innerHTML = html;
@@ -189,6 +196,13 @@
     addTableRow('referenceTable', 4, referencePlaceholders);
   }
 
+  function applyDefaultConstraints() {
+    const form = document.getElementById('applicationForm');
+    form.querySelectorAll('input[type="text"], input[type="tel"]').forEach((input) => {
+      if (!input.hasAttribute('maxlength')) input.setAttribute('maxlength', String(DEFAULT_TEXT_MAXLENGTH));
+    });
+  }
+
   function initPhotoPreview() {
     const input = document.getElementById('photoInput');
     const preview = document.getElementById('photoPreview');
@@ -196,6 +210,22 @@
     input.addEventListener('change', () => {
       const file = input.files[0];
       if (!file) return;
+
+      if (!ALLOWED_PHOTO_TYPES.includes(file.type)) {
+        window.alert('รองรับเฉพาะไฟล์รูปภาพ JPEG, PNG หรือ WebP เท่านั้น\nOnly JPEG, PNG, or WebP image files are allowed.');
+        input.value = '';
+        preview.hidden = true;
+        label.hidden = false;
+        return;
+      }
+      if (file.size > MAX_PHOTO_BYTES) {
+        window.alert('ไฟล์รูปภาพต้องมีขนาดไม่เกิน 5 MB\nThe photo file must be 5 MB or smaller.');
+        input.value = '';
+        preview.hidden = true;
+        label.hidden = false;
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         preview.src = e.target.result;
@@ -364,6 +394,7 @@
   buildLanguageTable();
   buildQaTable();
   initDefaultRows();
+  applyDefaultConstraints();
   initPhotoPreview();
   initSameAsPresent();
   initAgeAutoCalc();

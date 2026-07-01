@@ -6,6 +6,16 @@ var TARGET_FOLDER_ID = '';
 // ตั้งค่า (ไม่บังคับ): Spreadsheet ID สำหรับบันทึกสรุปแต่ละใบสมัครเป็นแถวเพิ่มเติม
 var LOG_SPREADSHEET_ID = '';
 
+// การจำกัดรูปแบบข้อมูลที่รับเข้ามา (server-side validation)
+var REQUIRED_FIELDS = ['positionApplied', 'firstNameThai', 'lastNameThai', 'idNo', 'mobile', 'email', 'signature'];
+var MAX_FIELD_LENGTH = 2000;
+var MAX_PAYLOAD_BYTES = 8 * 1024 * 1024; // 8 MB ต่อคำขอ
+var MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5 MB ต่อรูปภาพ (ก่อนเข้ารหัส base64)
+var ALLOWED_PHOTO_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+var MOBILE_PATTERN = /^0[0-9]{8,9}$/;
+var ID_PATTERN = /^[A-Za-z0-9]{6,20}$/;
+
 var SECTION_FIELDS = [
   { title: 'ตำแหน่งที่สมัคร / Position', fields: [
     ['positionApplied', 'ตำแหน่งที่ต้องการสมัคร / Position Applied'],
@@ -82,7 +92,15 @@ function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
-    var data = JSON.parse(e.postData.contents);
+    var rawContent = e.postData.contents || '';
+    if (rawContent.length > MAX_PAYLOAD_BYTES) {
+      return jsonResponse({ status: 'error', message: 'ขนาดข้อมูลเกินกำหนด / Payload too large' });
+    }
+    var data = JSON.parse(rawContent);
+    var validationError = validateSubmission(data);
+    if (validationError) {
+      return jsonResponse({ status: 'error', message: validationError });
+    }
     var doc = createApplicationDoc(data);
     logToSheet(data, doc.getUrl());
     return jsonResponse({ status: 'ok', docUrl: doc.getUrl() });
@@ -91,6 +109,49 @@ function doPost(e) {
   } finally {
     lock.releaseLock();
   }
+}
+
+function validateSubmission(data) {
+  if (!data || typeof data !== 'object') {
+    return 'รูปแบบข้อมูลไม่ถูกต้อง / Invalid payload format';
+  }
+
+  for (var i = 0; i < REQUIRED_FIELDS.length; i++) {
+    var field = REQUIRED_FIELDS[i];
+    if (!data[field] || String(data[field]).trim() === '') {
+      return 'กรุณากรอกข้อมูลให้ครบถ้วน / Missing required field: ' + field;
+    }
+  }
+
+  if (!EMAIL_PATTERN.test(String(data.email))) {
+    return 'รูปแบบอีเมลไม่ถูกต้อง / Invalid email format';
+  }
+  if (!MOBILE_PATTERN.test(String(data.mobile))) {
+    return 'รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง (ต้องขึ้นต้นด้วย 0 ตามด้วยตัวเลข 8-9 หลัก) / Invalid mobile number format';
+  }
+  if (!ID_PATTERN.test(String(data.idNo))) {
+    return 'รูปแบบเลขบัตรประชาชน/พาสปอร์ตไม่ถูกต้อง / Invalid ID/Passport format';
+  }
+
+  for (var key in data) {
+    if (!data.hasOwnProperty(key) || key === 'photoBase64') continue;
+    var value = data[key];
+    if (typeof value === 'string' && value.length > MAX_FIELD_LENGTH) {
+      return 'ข้อมูลในฟิลด์ ' + key + ' ยาวเกินไป / Field "' + key + '" is too long';
+    }
+  }
+
+  if (data.photoBase64) {
+    if (ALLOWED_PHOTO_MIME_TYPES.indexOf(data.photoMimeType) === -1) {
+      return 'รองรับเฉพาะไฟล์รูปภาพ JPEG, PNG หรือ WebP เท่านั้น / Unsupported photo type';
+    }
+    var approxPhotoBytes = Math.floor(data.photoBase64.length * 0.75);
+    if (approxPhotoBytes > MAX_PHOTO_BYTES) {
+      return 'ไฟล์รูปภาพต้องมีขนาดไม่เกิน 5 MB / Photo must be 5 MB or smaller';
+    }
+  }
+
+  return null;
 }
 
 function doGet(e) {

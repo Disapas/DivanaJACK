@@ -21,7 +21,7 @@
     </div>
     <div class="photo-box">
       <label for="photoInput" id="photoLabel">Photo</label>
-      <input type="file" id="photoInput" name="photo" accept="image/*">
+      <input type="file" id="photoInput" name="photo" accept="image/jpeg,image/png,image/webp">
       <img id="photoPreview" alt="" hidden>
     </div>
   </header>
@@ -82,7 +82,8 @@
 
     <div class="field">
       <label for="idNo">เลขบัตรประจำตัวประชาชน/Passport No. <span class="en">ID / Passport No.</span></label>
-      <input type="text" id="idNo" name="idNo" required>
+      <input type="text" id="idNo" name="idNo" required pattern="[A-Za-z0-9]{6,20}" maxlength="20"
+        title="กรอกตัวอักษรและตัวเลข 6-20 ตัว / Enter 6-20 letters or digits">
     </div>
     <div class="field">
       <label for="idExpiry">วันหมดอายุ <span class="en">Expiry Date</span></label>
@@ -95,7 +96,7 @@
     </div>
     <div class="field">
       <label for="age">อายุ <span class="en">Age</span></label>
-      <input type="number" id="age" name="age" min="0">
+      <input type="number" id="age" name="age" min="0" max="120">
     </div>
     <div class="field">
       <label for="citizenship">สัญชาติ <span class="en">Citizenship</span></label>
@@ -108,11 +109,11 @@
     </div>
     <div class="field">
       <label for="height">ส่วนสูง (ซม.) <span class="en">Height (cm)</span></label>
-      <input type="number" id="height" name="height" min="0">
+      <input type="number" id="height" name="height" min="0" max="250">
     </div>
     <div class="field">
       <label for="weight">น้ำหนัก (กก.) <span class="en">Weight (kg)</span></label>
-      <input type="number" id="weight" name="weight" min="0">
+      <input type="number" id="weight" name="weight" min="0" max="300">
     </div>
 
     <div class="field">
@@ -126,11 +127,12 @@
 
     <div class="field">
       <label for="mobile">เบอร์โทรศัพท์ <span class="en">Mobile No.</span></label>
-      <input type="tel" id="mobile" name="mobile" required>
+      <input type="tel" id="mobile" name="mobile" required pattern="0[0-9]{8,9}" maxlength="10" inputmode="numeric"
+        title="กรอกเบอร์โทรศัพท์ไทย 9-10 หลัก ขึ้นต้นด้วย 0 / Enter a Thai phone number starting with 0">
     </div>
     <div class="field span-2">
       <label for="email">อีเมล์ <span class="en">Email</span></label>
-      <input type="email" id="email" name="email" required>
+      <input type="email" id="email" name="email" required maxlength="254">
     </div>
   </section>
 
@@ -160,15 +162,15 @@
     </div>
     <div class="field span-2">
       <label for="spouseContact">เบอร์ติดต่อ <span class="en">Contact No.</span></label>
-      <input type="tel" id="spouseContact" name="spouseContact">
+      <input type="tel" id="spouseContact" name="spouseContact" pattern="0[0-9]{8,9}" maxlength="10" inputmode="numeric">
     </div>
 
     <div class="field span-3">
       <label>จำนวนบุตร <span class="en">Number of Children</span></label>
       <div class="children-rows">
-        <div class="inline-group"><input type="text" name="child1Name" placeholder="1. ชื่อ-สกุล"><input type="number" name="child1Age" placeholder="อายุ / Age" min="0" class="short"></div>
-        <div class="inline-group"><input type="text" name="child2Name" placeholder="2. ชื่อ-สกุล"><input type="number" name="child2Age" placeholder="อายุ / Age" min="0" class="short"></div>
-        <div class="inline-group"><input type="text" name="child3Name" placeholder="3. ชื่อ-สกุล"><input type="number" name="child3Age" placeholder="อายุ / Age" min="0" class="short"></div>
+        <div class="inline-group"><input type="text" name="child1Name" placeholder="1. ชื่อ-สกุล" maxlength="200"><input type="number" name="child1Age" placeholder="อายุ / Age" min="0" max="120" class="short"></div>
+        <div class="inline-group"><input type="text" name="child2Name" placeholder="2. ชื่อ-สกุล" maxlength="200"><input type="number" name="child2Age" placeholder="อายุ / Age" min="0" max="120" class="short"></div>
+        <div class="inline-group"><input type="text" name="child3Name" placeholder="3. ชื่อ-สกุล" maxlength="200"><input type="number" name="child3Age" placeholder="อายุ / Age" min="0" max="120" class="short"></div>
       </div>
     </div>
   </section>
@@ -197,7 +199,7 @@
     </div>
     <div class="field">
       <label for="presentPostcode">รหัสไปรษณีย์ <span class="en">Post Code</span></label>
-      <input type="text" id="presentPostcode" name="presentPostcode">
+      <input type="text" id="presentPostcode" name="presentPostcode" pattern="[0-9]{5}" maxlength="5" inputmode="numeric">
     </div>
     <div class="field">
       <label for="presentCountry">ประเทศ <span class="en">Country</span></label>
@@ -231,7 +233,7 @@
     </div>
     <div class="field">
       <label for="regPostcode">รหัสไปรษณีย์ <span class="en">Post Code</span></label>
-      <input type="text" id="regPostcode" name="regPostcode">
+      <input type="text" id="regPostcode" name="regPostcode" pattern="[0-9]{5}" maxlength="5" inputmode="numeric">
     </div>
     <div class="field">
       <label for="regCountry">ประเทศ <span class="en">Country</span></label>
@@ -251,7 +253,7 @@
     </div>
     <div class="field">
       <label for="emergencyMobile">เบอร์โทรศัพท์ <span class="en">Mobile No.</span></label>
-      <input type="tel" id="emergencyMobile" name="emergencyMobile">
+      <input type="tel" id="emergencyMobile" name="emergencyMobile" pattern="0[0-9]{8,9}" maxlength="10" inputmode="numeric">
     </div>
   </section>
 
@@ -428,7 +430,7 @@
     </div>
     <div class="field">
       <label for="signature">ผู้สมัคร (ลงชื่อ) <span class="en">Applicant's Signature</span></label>
-      <input type="text" id="signature" name="signature" placeholder="พิมพ์ชื่อ-สกุลแทนลายเซ็น / Type full name" required>
+      <input type="text" id="signature" name="signature" placeholder="พิมพ์ชื่อ-สกุลแทนลายเซ็น / Type full name" required maxlength="200">
     </div>
   </section>
 
