@@ -248,6 +248,42 @@
     result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  function readPhotoAsBase64(maxDimension) {
+    const input = document.getElementById('photoInput');
+    const file = input.files && input.files[0];
+    if (!file) return Promise.resolve(null);
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDimension || height > maxDimension) {
+            const scale = maxDimension / Math.max(width, height);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          resolve({
+            base64: dataUrl.split(',')[1],
+            mimeType: 'image/jpeg',
+            fileName: file.name || 'photo.jpg',
+          });
+        };
+        img.onerror = () => reject(new Error('ไม่สามารถอ่านไฟล์รูปภาพได้ / Could not read the photo file'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('ไม่สามารถอ่านไฟล์รูปภาพได้ / Could not read the photo file'));
+      reader.readAsDataURL(file);
+    });
+  }
+
   function initFormSubmit() {
     const form = document.getElementById('applicationForm');
     const result = document.getElementById('submitResult');
@@ -282,11 +318,19 @@
       const originalLabel = submitBtn.textContent;
       submitBtn.textContent = 'กำลังส่งข้อมูล... / Submitting...';
 
-      fetch(scriptUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(data),
-      })
+      readPhotoAsBase64(1000)
+        .then((photo) => {
+          if (photo) {
+            data.photoBase64 = photo.base64;
+            data.photoMimeType = photo.mimeType;
+            data.photoFileName = photo.fileName;
+          }
+          return fetch(scriptUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(data),
+          });
+        })
         .then((res) => res.json())
         .then((json) => {
           if (json.status === 'ok') {

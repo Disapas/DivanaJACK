@@ -114,6 +114,8 @@ function createApplicationDoc(data) {
   body.appendParagraph('ใบสมัครงาน / Application for Employment - divana').setHeading(DocumentApp.ParagraphHeading.TITLE);
   body.appendParagraph('บันทึกเมื่อ / Submitted: ' + timestamp).setItalic(true);
 
+  appendApplicantPhoto(body, data);
+
   SECTION_FIELDS.forEach(function (section) {
     appendSectionHeading(body, section.title);
     section.fields.forEach(function (pair) {
@@ -175,6 +177,23 @@ function createApplicationDoc(data) {
     DriveApp.getRootFolder().removeFile(file);
   }
   return doc;
+}
+
+function appendApplicantPhoto(body, data) {
+  if (!data.photoBase64) return;
+  try {
+    var bytes = Utilities.base64Decode(data.photoBase64);
+    var blob = Utilities.newBlob(bytes, data.photoMimeType || 'image/jpeg', data.photoFileName || 'photo.jpg');
+    var image = body.appendImage(blob);
+    var maxWidth = 150;
+    if (image.getWidth() > maxWidth) {
+      var ratio = maxWidth / image.getWidth();
+      image.setWidth(maxWidth);
+      image.setHeight(Math.round(image.getHeight() * ratio));
+    }
+  } catch (err) {
+    body.appendParagraph('(ไม่สามารถแนบรูปภาพได้ / Could not attach photo: ' + err.message + ')').setItalic(true);
+  }
 }
 
 function appendSectionHeading(body, text) {
