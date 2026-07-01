@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ใบสมัครงาน | Application for Employment - divana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<form id="applicationForm" novalidate>
+
+  <header class="sheet-header">
+    <div class="logo">divana</div>
+    <div class="title-block">
+      <h1>ใบสมัครงาน</h1>
+      <h2>Application for Employment</h2>
+    </div>
+    <div class="photo-box">
+      <label for="photoInput" id="photoLabel">Photo</label>
+      <input type="file" id="photoInput" name="photo" accept="image/*">
+      <img id="photoPreview" alt="" hidden>
+    </div>
+  </header>
+
+  <p class="notice">"โปรดกรอกข้อมูลให้ครบถ้วนตามความเป็นจริง เพื่อประโยชน์ของผู้สมัครงาน บริษัทฯ จะเก็บข้อมูลนี้เป็นความลับ ตามกฎหมาย พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล และเป็นไปตามวัตถุประสงค์ของบริษัทฯ"</p>
+  <p class="notice">ข้าพเจ้าผู้สมัครงาน ขอให้ข้อมูลส่วนบุคคลของข้าพเจ้าตามความเป็นจริงดังต่อไปนี้</p>
+
+  <section class="row-3">
+    <div class="field">
+      <label for="positionApplied">ตำแหน่งที่ต้องการสมัคร<br><span class="en">Position Applied</span></label>
+      <input type="text" id="positionApplied" name="positionApplied" required>
+    </div>
+    <div class="field">
+      <label for="expectedSalary">เงินเดือนที่ต้องการ<br><span class="en">Expected Salary</span></label>
+      <input type="text" id="expectedSalary" name="expectedSalary">
+    </div>
+    <div class="field">
+      <label for="dateAvailable">วันที่สามารถเริ่มงานได้<br><span class="en">Date Available for Employment</span></label>
+      <input type="date" id="dateAvailable" name="dateAvailable">
+    </div>
+  </section>
+
+  <h3 class="section-title">ข้อมูลส่วนบุคคล <span class="en">Personal Data</span></h3>
+
+  <section class="grid">
+    <div class="field span-2">
+      <label>ชื่อ-สกุล (ภาษาไทย) <span class="en">Name-Surname (Thai)</span></label>
+      <div class="inline-group">
+        <select name="titleThai" aria-label="คำนำหน้า">
+          <option value="">คำนำหน้า</option>
+          <option>นาย</option>
+          <option>นาง</option>
+          <option>นางสาว</option>
+        </select>
+        <input type="text" name="firstNameThai" placeholder="ชื่อ" required>
+        <input type="text" name="lastNameThai" placeholder="นามสกุล" required>
+      </div>
+    </div>
+    <div class="field">
+      <label for="nickname">ชื่อเล่น <span class="en">Nickname</span></label>
+      <input type="text" id="nickname" name="nickname">
+    </div>
+
+    <div class="field span-2">
+      <label>Name-Surname (English)</label>
+      <div class="inline-group">
+        <select name="titleEnglish" aria-label="Title">
+          <option value="">Title</option>
+          <option>Mr.</option>
+          <option>Mrs.</option>
+          <option>Ms.</option>
+        </select>
+        <input type="text" name="firstNameEnglish" placeholder="First Name">
+        <input type="text" name="lastNameEnglish" placeholder="Last Name">
+      </div>
+    </div>
+    <div class="field"></div>
+
+    <div class="field">
+      <label for="idNo">เลขบัตรประจำตัวประชาชน/Passport No. <span class="en">ID / Passport No.</span></label>
+      <input type="text" id="idNo" name="idNo" required>
+    </div>
+    <div class="field">
+      <label for="idExpiry">วันหมดอายุ <span class="en">Expiry Date</span></label>
+      <input type="date" id="idExpiry" name="idExpiry">
+    </div>
+
+    <div class="field">
+      <label for="dob">วัน เดือน ปี เกิด <span class="en">Date of Birth</span></label>
+      <input type="date" id="dob" name="dob">
+    </div>
+    <div class="field">
+      <label for="age">อายุ <span class="en">Age</span></label>
+      <input type="number" id="age" name="age" min="0">
+    </div>
+    <div class="field">
+      <label for="citizenship">สัญชาติ <span class="en">Citizenship</span></label>
+      <input type="text" id="citizenship" name="citizenship">
+    </div>
+
+    <div class="field">
+      <label for="religion">ศาสนา <span class="en">Religion</span></label>
+      <input type="text" id="religion" name="religion">
+    </div>
+    <div class="field">
+      <label for="height">ส่วนสูง (ซม.) <span class="en">Height (cm)</span></label>
+      <input type="number" id="height" name="height" min="0">
+    </div>
+    <div class="field">
+      <label for="weight">น้ำหนัก (กก.) <span class="en">Weight (kg)</span></label>
+      <input type="number" id="weight" name="weight" min="0">
+    </div>
+
+    <div class="field">
+      <label for="birthProvince">จังหวัดที่เกิด <span class="en">Province of Birth</span></label>
+      <input type="text" id="birthProvince" name="birthProvince">
+    </div>
+    <div class="field span-2">
+      <label for="birthCountry">ประเทศที่เกิด <span class="en">Country of Birth</span></label>
+      <input type="text" id="birthCountry" name="birthCountry">
+    </div>
+
+    <div class="field">
+      <label for="mobile">เบอร์โทรศัพท์ <span class="en">Mobile No.</span></label>
+      <input type="tel" id="mobile" name="mobile" required>
+    </div>
+    <div class="field span-2">
+      <label for="email">อีเมล์ <span class="en">Email</span></label>
+      <input type="email" id="email" name="email" required>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="field span-3">
+      <label>สถานภาพการรับราชการทหาร <span class="en">Military Status</span></label>
+      <div class="radio-group">
+        <label><input type="radio" name="militaryStatus" value="exempted"> ได้รับการยกเว้น / Exempted</label>
+        <label><input type="radio" name="militaryStatus" value="reserved"> ปลดกองหนุน / Reserved</label>
+        <label><input type="radio" name="militaryStatus" value="not-recruited"> ยังไม่ผ่านการเกณฑ์ / Will be Recruited</label>
+      </div>
+    </div>
+
+    <div class="field span-3">
+      <label>สถานภาพสมรส <span class="en">Marital Status</span></label>
+      <div class="radio-group">
+        <label><input type="radio" name="maritalStatus" value="single"> โสด / Single</label>
+        <label><input type="radio" name="maritalStatus" value="married"> สมรส / Married</label>
+        <label><input type="radio" name="maritalStatus" value="divorced"> หย่าร้าง / Divorced</label>
+        <label><input type="radio" name="maritalStatus" value="other"> อื่นๆ / Other <input type="text" name="maritalStatusOther" class="inline-text"></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="spouseName">คู่สมรส ชื่อ-สกุล <span class="en">Spouse's Name-Surname</span></label>
+      <input type="text" id="spouseName" name="spouseName">
+    </div>
+    <div class="field span-2">
+      <label for="spouseContact">เบอร์ติดต่อ <span class="en">Contact No.</span></label>
+      <input type="tel" id="spouseContact" name="spouseContact">
+    </div>
+
+    <div class="field span-3">
+      <label>จำนวนบุตร <span class="en">Number of Children</span></label>
+      <div class="children-rows">
+        <div class="inline-group"><input type="text" name="child1Name" placeholder="1. ชื่อ-สกุล"><input type="number" name="child1Age" placeholder="อายุ / Age" min="0" class="short"></div>
+        <div class="inline-group"><input type="text" name="child2Name" placeholder="2. ชื่อ-สกุล"><input type="number" name="child2Age" placeholder="อายุ / Age" min="0" class="short"></div>
+        <div class="inline-group"><input type="text" name="child3Name" placeholder="3. ชื่อ-สกุล"><input type="number" name="child3Age" placeholder="อายุ / Age" min="0" class="short"></div>
+      </div>
+    </div>
+  </section>
+
+  <h3 class="section-title">ที่อยู่ปัจจุบัน <span class="en">Present Address</span></h3>
+  <section class="grid">
+    <div class="field">
+      <label for="presentHouseNo">บ้านเลขที่ <span class="en">House No.</span></label>
+      <input type="text" id="presentHouseNo" name="presentHouseNo">
+    </div>
+    <div class="field span-2">
+      <label for="presentStreet">ถนน / ซอย <span class="en">Street</span></label>
+      <input type="text" id="presentStreet" name="presentStreet">
+    </div>
+    <div class="field">
+      <label for="presentSubdistrict">ตำบล / แขวง <span class="en">Sub-district</span></label>
+      <input type="text" id="presentSubdistrict" name="presentSubdistrict">
+    </div>
+    <div class="field span-2">
+      <label for="presentDistrict">อำเภอ / เขต <span class="en">District</span></label>
+      <input type="text" id="presentDistrict" name="presentDistrict">
+    </div>
+    <div class="field">
+      <label for="presentProvince">จังหวัด <span class="en">Province</span></label>
+      <input type="text" id="presentProvince" name="presentProvince">
+    </div>
+    <div class="field">
+      <label for="presentPostcode">รหัสไปรษณีย์ <span class="en">Post Code</span></label>
+      <input type="text" id="presentPostcode" name="presentPostcode">
+    </div>
+    <div class="field">
+      <label for="presentCountry">ประเทศ <span class="en">Country</span></label>
+      <input type="text" id="presentCountry" name="presentCountry">
+    </div>
+  </section>
+
+  <h3 class="section-title">ที่อยู่ตามทะเบียนบ้าน <span class="en">Registered Address</span>
+    <label class="same-as"><input type="checkbox" id="sameAsPresent"> เหมือนที่อยู่ปัจจุบัน / Same as Present Address</label>
+  </h3>
+  <section class="grid" id="registeredAddressGroup">
+    <div class="field">
+      <label for="regHouseNo">บ้านเลขที่ <span class="en">House No.</span></label>
+      <input type="text" id="regHouseNo" name="regHouseNo">
+    </div>
+    <div class="field span-2">
+      <label for="regStreet">ถนน / ซอย <span class="en">Street</span></label>
+      <input type="text" id="regStreet" name="regStreet">
+    </div>
+    <div class="field">
+      <label for="regSubdistrict">ตำบล / แขวง <span class="en">Sub-district</span></label>
+      <input type="text" id="regSubdistrict" name="regSubdistrict">
+    </div>
+    <div class="field span-2">
+      <label for="regDistrict">อำเภอ / เขต <span class="en">District</span></label>
+      <input type="text" id="regDistrict" name="regDistrict">
+    </div>
+    <div class="field">
+      <label for="regProvince">จังหวัด <span class="en">Province</span></label>
+      <input type="text" id="regProvince" name="regProvince">
+    </div>
+    <div class="field">
+      <label for="regPostcode">รหัสไปรษณีย์ <span class="en">Post Code</span></label>
+      <input type="text" id="regPostcode" name="regPostcode">
+    </div>
+    <div class="field">
+      <label for="regCountry">ประเทศ <span class="en">Country</span></label>
+      <input type="text" id="regCountry" name="regCountry">
+    </div>
+  </section>
+
+  <h3 class="section-title">บุคคลที่ติดต่อได้กรณีฉุกเฉิน <span class="en">In Case of Emergency, Please Notify</span></h3>
+  <section class="grid">
+    <div class="field">
+      <label for="emergencyName">ชื่อ-สกุล <span class="en">Name-Surname</span></label>
+      <input type="text" id="emergencyName" name="emergencyName">
+    </div>
+    <div class="field">
+      <label for="emergencyRelationship">ความสัมพันธ์ <span class="en">Relationship</span></label>
+      <input type="text" id="emergencyRelationship" name="emergencyRelationship">
+    </div>
+    <div class="field">
+      <label for="emergencyMobile">เบอร์โทรศัพท์ <span class="en">Mobile No.</span></label>
+      <input type="tel" id="emergencyMobile" name="emergencyMobile">
+    </div>
+  </section>
+
+  <h3 class="section-title">ประวัติการศึกษา <span class="en">Academic Background</span></h3>
+  <section class="table-wrap">
+    <table id="educationTable">
+      <thead>
+        <tr>
+          <th>ระดับการศึกษา<br><span class="en">Education</span></th>
+          <th>ปีที่เข้า<br><span class="en">From Year</span></th>
+          <th>ปีที่จบ<br><span class="en">To Year</span></th>
+          <th>สถาบันการศึกษา<br><span class="en">Institute's Name</span></th>
+          <th>วุฒิการศึกษา<br><span class="en">Degree</span></th>
+          <th>สาขา<br><span class="en">Major Subject</span></th>
+          <th>เกรดเฉลี่ย<br><span class="en">GPA</span></th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </section>
+
+  <h3 class="section-title">ประวัติการทำงาน <span class="en">Work Experience</span></h3>
+  <p class="hint">เรียงจากปัจจุบันไปจนถึงที่ทำงานแรก / List Your Full-Time Employment Experiences with The Most Recent First</p>
+  <section class="table-wrap">
+    <table id="workTable">
+      <thead>
+        <tr>
+          <th>ว/ด/ปี ที่เข้า<br><span class="en">From D/M/Y</span></th>
+          <th>ถึง ว/ด/ปี<br><span class="en">To D/M/Y</span></th>
+          <th>ชื่อบริษัท<br><span class="en">Company's Name</span></th>
+          <th>ตำแหน่ง<br><span class="en">Position</span></th>
+          <th>ลักษณะงานที่ทำ<br><span class="en">Main Duties</span></th>
+          <th>เงินเดือน<br><span class="en">Last Salary</span></th>
+          <th>เหตุผลที่ลาออก<br><span class="en">Reason for Leaving</span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button type="button" class="add-row" data-target="workTable" data-cols="7">+ เพิ่มแถว / Add Row</button>
+  </section>
+
+  <h3 class="section-title">ประวัติการฝึกอบรม <span class="en">Training</span></h3>
+  <section class="table-wrap">
+    <table id="trainingTable">
+      <thead>
+        <tr>
+          <th>หลักสูตร<br><span class="en">Courses</span></th>
+          <th>สถาบัน<br><span class="en">Institute</span></th>
+          <th>ปีที่เรียน<br><span class="en">Year</span></th>
+          <th>วุฒิบัตร<br><span class="en">Certificate</span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button type="button" class="add-row" data-target="trainingTable" data-cols="4">+ เพิ่มแถว / Add Row</button>
+  </section>
+
+  <h3 class="section-title">ทักษะและความสามารถ <span class="en">Skill and Abilities</span></h3>
+  <h4 class="sub-title">ความสามารถด้านภาษา <span class="en">Language Proficiency</span></h4>
+  <section class="table-wrap">
+    <table class="lang-table">
+      <thead>
+        <tr>
+          <th rowspan="2">ภาษา<br><span class="en">Languages</span></th>
+          <th rowspan="2">เจ้าของภาษา<br><span class="en">Native</span></th>
+          <th colspan="3">ฟัง<br><span class="en">Listening</span></th>
+          <th colspan="3">พูด<br><span class="en">Speaking</span></th>
+          <th colspan="3">อ่าน<br><span class="en">Reading</span></th>
+          <th colspan="3">เขียน<br><span class="en">Writing</span></th>
+        </tr>
+        <tr>
+          <th>ดีมาก</th><th>ปานกลาง</th><th>ไม่ดี</th>
+          <th>ดีมาก</th><th>ปานกลาง</th><th>ไม่ดี</th>
+          <th>ดีมาก</th><th>ปานกลาง</th><th>ไม่ดี</th>
+          <th>ดีมาก</th><th>ปานกลาง</th><th>ไม่ดี</th>
+        </tr>
+      </thead>
+      <tbody id="langTableBody">
+      </tbody>
+    </table>
+  </section>
+
+  <section class="grid">
+    <div class="field span-3">
+      <label for="computerSkills">ความสามารถด้านคอมพิวเตอร์ <span class="en">Computer Program</span></label>
+      <input type="text" id="computerSkills" name="computerSkills">
+    </div>
+    <div class="field span-3">
+      <label for="otherAbilities">ความสามารถด้านอื่นๆ <span class="en">Other Abilities</span></label>
+      <input type="text" id="otherAbilities" name="otherAbilities">
+    </div>
+  </section>
+
+  <h4 class="sub-title">ความสามารถในการขับขี่ <span class="en">Driving Ability</span></h4>
+  <section class="grid">
+    <div class="field">
+      <label>รถยนต์ <span class="en">Car</span></label>
+      <div class="radio-group">
+        <label><input type="radio" name="canDriveCar" value="yes"> ได้ / Yes</label>
+        <label><input type="radio" name="canDriveCar" value="no"> ไม่ได้ / No</label>
+      </div>
+    </div>
+    <div class="field span-2">
+      <label for="carLicenseNo">เลขใบขับขี่ <span class="en">Driving License No.</span></label>
+      <input type="text" id="carLicenseNo" name="carLicenseNo">
+    </div>
+
+    <div class="field">
+      <label>รถจักรยานยนต์ <span class="en">Motorcycle</span></label>
+      <div class="radio-group">
+        <label><input type="radio" name="canDriveMotorcycle" value="yes"> ได้ / Yes</label>
+        <label><input type="radio" name="canDriveMotorcycle" value="no"> ไม่ได้ / No</label>
+      </div>
+    </div>
+    <div class="field span-2">
+      <label for="motorcycleLicenseNo">เลขใบขับขี่ <span class="en">Driving License No.</span></label>
+      <input type="text" id="motorcycleLicenseNo" name="motorcycleLicenseNo">
+    </div>
+  </section>
+
+  <h3 class="section-title">บุคคลอ้างอิง <span class="en">Reference (Former Colleagues or Friend)</span></h3>
+  <section class="table-wrap">
+    <table id="referenceTable">
+      <thead>
+        <tr>
+          <th>ชื่อ-สกุล<br><span class="en">Name-Surname</span></th>
+          <th>อาชีพ<br><span class="en">Occupation</span></th>
+          <th>เบอร์ติดต่อ<br><span class="en">Mobile</span></th>
+          <th>ความสัมพันธ์<br><span class="en">Relationship</span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button type="button" class="add-row" data-target="referenceTable" data-cols="4">+ เพิ่มแถว / Add Row</button>
+  </section>
+
+  <h3 class="section-title">ข้อมูลอื่นๆ <span class="en">Other Information</span></h3>
+  <section class="table-wrap">
+    <table class="qa-table">
+      <thead>
+        <tr>
+          <th>คำถาม<br><span class="en">Question</span></th>
+          <th>คำตอบ<br><span class="en">Answer</span></th>
+          <th>โปรดระบุรายละเอียด<br><span class="en">Please Give Particulars</span></th>
+        </tr>
+      </thead>
+      <tbody id="qaTableBody"></tbody>
+    </table>
+  </section>
+
+  <h3 class="section-title">การรับรองข้อมูล <span class="en">Certification</span></h3>
+  <p class="certify-text">
+    ข้าพเจ้าขอรับรองว่า ข้อความที่ได้กรอกในใบสมัครนี้หรือเอกสารอื่นใดที่เกี่ยวกับการสมัครงานนี้ เป็นความจริงทุกประการ
+    หากปรากฏในภายหลังว่าข้าพเจ้าปกปิด และหรือให้ข้อมูลเท็จ ข้าพเจ้ายินดีให้บริษัทฯ พิจารณาเลิกจ้างข้าพเจ้าโดยทันที
+    โดยไม่ต้องจ่ายค่าชดเชยและค่าเสียหายใดๆ ทั้งสิ้น และถ้าบริษัทฯ ได้รับความเสียหายด้วยประการใดๆ ในกรณีนี้
+    ข้าพเจ้ายินยอมที่จะชดใช้ค่าเสียหายนั้นๆ แก่บริษัทฯ จนครบถ้วน โดยไม่ยกข้อต่อสู้ใดๆ ขึ้นได้แม้แต่กับบริษัทฯ เป็นอันขาด
+  </p>
+  <p class="certify-text en">
+    I certify that the given information and document are true and correct. I acknowledge that a proven of false
+    information or document, the company has right to terminate my employment immediately without compensation or
+    severance pay. I agree to compensate the company for any damage incurred from the provision of the false information.
+  </p>
+
+  <section class="grid">
+    <div class="field span-2">
+      <label class="agree-label">
+        <input type="checkbox" id="agreeCertification" name="agreeCertification" required>
+        ข้าพเจ้ารับรองว่าข้อมูลข้างต้นเป็นความจริง / I certify that the above information is true and correct
+      </label>
+    </div>
+    <div class="field">
+      <label for="signature">ผู้สมัคร (ลงชื่อ) <span class="en">Applicant's Signature</span></label>
+      <input type="text" id="signature" name="signature" placeholder="พิมพ์ชื่อ-สกุลแทนลายเซ็น / Type full name" required>
+    </div>
+  </section>
+
+  <div class="form-actions">
+    <button type="submit" class="btn-primary">ส่งใบสมัคร / Submit Application</button>
+    <button type="button" class="btn-secondary" id="printBtn">พิมพ์ / Print</button>
+    <button type="reset" class="btn-secondary">ล้างข้อมูล / Reset</button>
+  </div>
+
+  <div id="submitResult" class="submit-result" hidden></div>
+
+</form>
+
+<script src="assets/js/form.js"></script>
+</body>
+</html>
