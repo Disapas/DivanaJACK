@@ -241,9 +241,18 @@
     });
   }
 
+  function showResult(result, success, message) {
+    result.hidden = false;
+    result.classList.toggle('error', !success);
+    result.textContent = message;
+    result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   function initFormSubmit() {
     const form = document.getElementById('applicationForm');
     const result = document.getElementById('submitResult');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!form.checkValidity()) {
@@ -256,12 +265,50 @@
         if (key === 'photo') return;
         data[key] = value;
       });
-      result.hidden = false;
-      result.classList.remove('error');
-      result.textContent =
-        'ส่งใบสมัครเรียบร้อยแล้ว ขอบคุณค่ะ / Application submitted successfully. Thank you.\n\n' +
-        JSON.stringify(data, null, 2);
-      result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      const scriptUrl = window.APP_CONFIG && window.APP_CONFIG.GOOGLE_APPS_SCRIPT_URL;
+      if (!scriptUrl) {
+        showResult(
+          result,
+          false,
+          'ยังไม่ได้ตั้งค่าปลายทางบันทึกข้อมูลลง Google Docs (ดู google-apps-script/README.md) ' +
+            'ข้อมูลด้านล่างนี้ยังไม่ถูกบันทึก:\n\n' +
+            JSON.stringify(data, null, 2)
+        );
+        return;
+      }
+
+      submitBtn.disabled = true;
+      const originalLabel = submitBtn.textContent;
+      submitBtn.textContent = 'กำลังส่งข้อมูล... / Submitting...';
+
+      fetch(scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.status === 'ok') {
+            showResult(
+              result,
+              true,
+              'ส่งใบสมัครและบันทึกลง Google Docs เรียบร้อยแล้ว ขอบคุณค่ะ\n' +
+                'Application submitted and saved to Google Docs.' +
+                (json.docUrl ? '\n\nเอกสาร / Document: ' + json.docUrl : '')
+            );
+            form.reset();
+          } else {
+            showResult(result, false, 'เกิดข้อผิดพลาดในการบันทึกข้อมูล / Failed to save: ' + (json.message || 'unknown error'));
+          }
+        })
+        .catch((err) => {
+          showResult(result, false, 'ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง / Could not submit, please try again.\n' + err.message);
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalLabel;
+        });
     });
   }
 
