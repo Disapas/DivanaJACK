@@ -1,5 +1,7 @@
 // Divana Employment Application receiver.
 // Deploy this as a Google Apps Script Web App - see README.md for setup steps.
+// Generated Google Docs follow the layout/section order of the official
+// "ใบสมัครงาน / Application for Employment - divana" paper form template.
 
 // ตั้งค่า (ไม่บังคับ): Folder ID ปลายทางเก็บเอกสารใบสมัครใน Google Drive
 var TARGET_FOLDER_ID = '';
@@ -16,51 +18,30 @@ var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 var MOBILE_PATTERN = /^0[0-9]{8,9}$/;
 var ID_PATTERN = /^[A-Za-z0-9]{6,20}$/;
 
-var SECTION_FIELDS = [
-  { title: 'ตำแหน่งที่สมัคร / Position', fields: [
-    ['positionApplied', 'ตำแหน่งที่ต้องการสมัคร / Position Applied'],
-    ['expectedSalary', 'เงินเดือนที่ต้องการ / Expected Salary'],
-    ['dateAvailable', 'วันที่สามารถเริ่มงานได้ / Date Available'],
-  ]},
-  { title: 'ข้อมูลส่วนบุคคล / Personal Data', fields: [
-    ['titleThai', 'คำนำหน้า (ไทย)'], ['firstNameThai', 'ชื่อ (ไทย)'], ['lastNameThai', 'นามสกุล (ไทย)'],
-    ['nickname', 'ชื่อเล่น / Nickname'],
-    ['titleEnglish', 'Title (English)'], ['firstNameEnglish', 'First Name'], ['lastNameEnglish', 'Last Name'],
-    ['idNo', 'เลขบัตรประชาชน/Passport No.'], ['idExpiry', 'วันหมดอายุบัตร'],
-    ['dob', 'วันเดือนปีเกิด'], ['age', 'อายุ'], ['citizenship', 'สัญชาติ'],
-    ['religion', 'ศาสนา'], ['height', 'ส่วนสูง (ซม.)'], ['weight', 'น้ำหนัก (กก.)'],
-    ['birthProvince', 'จังหวัดที่เกิด'], ['birthCountry', 'ประเทศที่เกิด'],
-    ['mobile', 'เบอร์โทรศัพท์'], ['email', 'อีเมล'],
-  ]},
-  { title: 'สถานภาพ / Status', fields: [
-    ['militaryStatus', 'สถานภาพทางทหาร'],
-    ['maritalStatus', 'สถานภาพสมรส'], ['maritalStatusOther', 'สถานภาพสมรส (อื่นๆ)'],
-    ['spouseName', 'ชื่อคู่สมรส'], ['spouseContact', 'เบอร์ติดต่อคู่สมรส'],
-    ['child1Name', 'บุตรคนที่ 1 ชื่อ'], ['child1Age', 'บุตรคนที่ 1 อายุ'],
-    ['child2Name', 'บุตรคนที่ 2 ชื่อ'], ['child2Age', 'บุตรคนที่ 2 อายุ'],
-    ['child3Name', 'บุตรคนที่ 3 ชื่อ'], ['child3Age', 'บุตรคนที่ 3 อายุ'],
-  ]},
-  { title: 'ที่อยู่ปัจจุบัน / Present Address', fields: [
-    ['presentHouseNo', 'บ้านเลขที่'], ['presentStreet', 'ถนน/ซอย'],
-    ['presentSubdistrict', 'ตำบล/แขวง'], ['presentDistrict', 'อำเภอ/เขต'],
-    ['presentProvince', 'จังหวัด'], ['presentPostcode', 'รหัสไปรษณีย์'], ['presentCountry', 'ประเทศ'],
-  ]},
-  { title: 'ที่อยู่ตามทะเบียนบ้าน / Registered Address', fields: [
-    ['regHouseNo', 'บ้านเลขที่'], ['regStreet', 'ถนน/ซอย'],
-    ['regSubdistrict', 'ตำบล/แขวง'], ['regDistrict', 'อำเภอ/เขต'],
-    ['regProvince', 'จังหวัด'], ['regPostcode', 'รหัสไปรษณีย์'], ['regCountry', 'ประเทศ'],
-  ]},
-  { title: 'บุคคลติดต่อกรณีฉุกเฉิน / Emergency Contact', fields: [
-    ['emergencyName', 'ชื่อ-สกุล'], ['emergencyRelationship', 'ความสัมพันธ์'], ['emergencyMobile', 'เบอร์โทรศัพท์'],
-  ]},
-  { title: 'ความสามารถอื่นๆ / Other Abilities', fields: [
-    ['computerSkills', 'ความสามารถด้านคอมพิวเตอร์'], ['otherAbilities', 'ความสามารถอื่นๆ'],
-    ['canDriveCar', 'ขับรถยนต์ได้หรือไม่'], ['carLicenseNo', 'เลขใบขับขี่รถยนต์'],
-    ['canDriveMotorcycle', 'ขับรถจักรยานยนต์ได้หรือไม่'], ['motorcycleLicenseNo', 'เลขใบขับขี่รถจักรยานยนต์'],
-  ]},
-  { title: 'การรับรองข้อมูล / Certification', fields: [
-    ['agreeCertification', 'ยืนยันข้อมูลถูกต้อง'], ['signature', 'ลายเซ็นผู้สมัคร'],
-  ]},
+// ตัวเลือกแบบ checkbox ตามฟอร์มต้นฉบับ
+var MILITARY_OPTIONS = [
+  { value: 'exempted', th: 'ได้รับการยกเว้น', en: 'Exempted' },
+  { value: 'reserved', th: 'ปลดกองหนุน', en: 'Reserved' },
+  { value: 'not-recruited', th: 'ยังไม่ผ่านการเกณฑ์', en: 'Will be Recruited' },
+];
+var MARITAL_OPTIONS = [
+  { value: 'single', th: 'โสด', en: 'Single' },
+  { value: 'married', th: 'สมรส', en: 'Married' },
+  { value: 'divorced', th: 'หย่าร้าง', en: 'Divorced' },
+  { value: 'other', th: 'อื่นๆ', en: 'Other' },
+];
+var DRIVE_OPTIONS = [
+  { value: 'no', th: 'ไม่ได้', en: 'No' },
+  { value: 'yes', th: 'ได้', en: 'Yes' },
+];
+var QA_YESNO_OPTIONS = [
+  { value: 'yes', th: 'มี', en: 'Yes' },
+  { value: 'no', th: 'ไม่มี', en: 'No' },
+];
+var QA_YESNO_TEMP_OPTIONS = [
+  { value: 'yes', th: 'ได้', en: 'Yes' },
+  { value: 'no', th: 'ไม่ได้', en: 'No' },
+  { value: 'temporary', th: 'ชั่วคราว', en: 'Temporary' },
 ];
 
 var EDUCATION_LEVELS = [
@@ -68,24 +49,66 @@ var EDUCATION_LEVELS = [
   'ปริญญาตรี / Bachelor', 'ปริญญาโท / Master', 'อื่นๆ / Other',
 ];
 var EDUCATION_COLS = ['fromYear', 'toYear', 'institute', 'degree', 'major', 'gpa'];
-var EDUCATION_COL_LABELS = ['ปีที่เข้า', 'ปีที่จบ', 'สถาบันการศึกษา', 'วุฒิการศึกษา', 'สาขา', 'เกรดเฉลี่ย'];
+var EDUCATION_HEADER = [
+  'ระดับการศึกษา\nEducation', 'ปีที่เข้า\nFrom Year', 'ปีที่จบ\nTo Year',
+  "สถาบันการศึกษา\nInstitute's Name", 'วุฒิการศึกษา\nDegree', 'สาขา\nMajor Subject', 'เกรดเฉลี่ย\nGPA',
+];
 
-var WORK_COLS = ['ว/ด/ปี ที่เข้า', 'ถึง ว/ด/ปี', 'ชื่อบริษัท', 'ตำแหน่ง', 'ลักษณะงาน', 'เงินเดือน', 'เหตุผลที่ลาออก'];
-var TRAINING_COLS = ['หลักสูตร', 'สถาบัน', 'ปีที่เรียน', 'วุฒิบัตร'];
-var REFERENCE_COLS = ['ชื่อ-สกุล', 'อาชีพ', 'เบอร์ติดต่อ', 'ความสัมพันธ์'];
+var WORK_HEADER = [
+  'ว/ด/ปี ที่เข้า\nFrom D/M/Y', 'ถึง ว/ด/ปี\nTo D/M/Y', "ชื่อบริษัท\nCompany's Name",
+  'ตำแหน่ง\nPosition', 'ลักษณะงานที่ทำ\nMain Duties', 'เงินเดือน\nLast Salary', 'เหตุผลที่ลาออก\nReason for Leaving',
+];
+var TRAINING_HEADER = ['หลักสูตร\nCourses', 'สถาบัน\nInstitute', 'ปีที่เรียน\nYear', 'วุฒิบัตร\nCertificate'];
+var REFERENCE_HEADER = ['ชื่อ-สกุล\nName-Surname', 'อาชีพ\nOccupation', 'เบอร์ติดต่อ\nMobile', 'ความสัมพันธ์\nRelationship'];
 
 var LANGUAGES = ['ไทย / Thai', 'อังกฤษ / English', 'จีน / Chinese', 'อื่นๆ / Other'];
 var LANG_SKILLS = ['listening', 'speaking', 'reading', 'writing'];
-var LANG_SKILL_LABELS = { listening: 'ฟัง', speaking: 'พูด', reading: 'อ่าน', writing: 'เขียน' };
+var LANG_LEVEL_LABELS = { good: 'ดีมาก / Good', fair: 'ปานกลาง / Fair', poor: 'ไม่ดี / Poor' };
+var LANG_HEADER = ['ภาษา\nLanguages', 'เจ้าของภาษา\nNative', 'ฟัง\nListening', 'พูด\nSpeaking', 'อ่าน\nReading', 'เขียน\nWriting'];
 
 var QUESTIONS = [
-  ['q_relatives', 'มีญาติ/เพื่อนทำงานในบริษัทนี้หรือไม่'],
-  ['q_dismissed', 'เคยถูกปลดออกจากงานหรือไม่'],
-  ['q_criminal', 'เคยถูกจับกุม/มีประวัติอาชญากรรมหรือไม่'],
-  ['q_health', 'มีความบกพร่องทางร่างกาย/จิตใจ หรือโรคประจำตัวหรือไม่'],
-  ['q_shift', 'สามารถทำงานเป็นกะ/กลางคืนได้หรือไม่'],
-  ['q_relocate', 'สามารถทำงานต่างจังหวัดได้หรือไม่'],
-  ['q_abroad', 'สามารถทำงานต่างประเทศได้หรือไม่'],
+  {
+    key: 'q_relatives',
+    th: 'ท่านมีญาติ/พี่น้อง/เพื่อน ที่ทำงานในบริษัทนี้หรือไม่ ถ้ามี กรุณาระบุ',
+    en: 'Do you have any relative/friend working in this company?',
+    options: QA_YESNO_OPTIONS,
+  },
+  {
+    key: 'q_dismissed',
+    th: 'ท่านเคยถูกปลดออกจากงานไม่ว่ากรณีใดหรือไม่ ถ้าเคยกรุณาระบุเหตุผล',
+    en: 'Have you ever been dismissed from employment for any reasons? If yes, please explain.',
+    options: QA_YESNO_OPTIONS,
+  },
+  {
+    key: 'q_criminal',
+    th: 'ท่านเคยถูกจับกุม หรือมีประวัติอาชญากรรมในคดีต่างๆ หรือไม่',
+    en: 'Have you ever been arrested or had any criminal records?',
+    options: QA_YESNO_OPTIONS,
+  },
+  {
+    key: 'q_health',
+    th: 'ท่านมีความบกพร่องทางร่างกายหรือจิตใจ มีโรคเรื้อรัง หรือโรคต่อไปนี้หรือไม่ (กามโรค วัณโรค เรื้อน ลมบ้าหมู หอบหืด โรคพิษสุราเรื้อรัง ไวรัสตับอักเสบ หรือความบกพร่องอื่นๆ)',
+    en: 'Do you have a body or mental disorder, chronic disease, Venereal disease, tuberculosis, leprosy, epilepsy, asthma, hepatitis, addiction or other disabilities?',
+    options: QA_YESNO_OPTIONS,
+  },
+  {
+    key: 'q_shift',
+    th: 'ท่านสามารถทำงานเป็นกะ / ทำงานกลางคืน ได้หรือไม่',
+    en: 'Are you able to do shift-work / night shift?',
+    options: QA_YESNO_TEMP_OPTIONS,
+  },
+  {
+    key: 'q_relocate',
+    th: 'ท่านสามารถทำงานต่างจังหวัด ได้หรือไม่',
+    en: 'Are you able to work in other provinces?',
+    options: QA_YESNO_TEMP_OPTIONS,
+  },
+  {
+    key: 'q_abroad',
+    th: 'ท่านสามารถปฏิบัติงานต่างประเทศได้หรือไม่',
+    en: 'Are you able to work abroad?',
+    options: QA_YESNO_TEMP_OPTIONS,
+  },
 ];
 
 function doPost(e) {
@@ -172,62 +195,23 @@ function createApplicationDoc(data) {
   var body = doc.getBody();
   body.clear();
 
-  body.appendParagraph('ใบสมัครงาน / Application for Employment - divana').setHeading(DocumentApp.ParagraphHeading.TITLE);
-  body.appendParagraph('บันทึกเมื่อ / Submitted: ' + timestamp).setItalic(true);
+  buildHeaderSection(body, data, timestamp);
+  buildPositionSection(body, data);
+  buildPersonalDataSection(body, data);
+  buildStatusSection(body, data);
+  buildAddressSection(body, data);
+  buildEmergencyContactSection(body, data);
 
-  appendApplicantPhoto(body, data);
+  buildEducationSection(body, data);
+  buildWorkExperienceSection(body, data);
+  buildTrainingSection(body, data);
 
-  SECTION_FIELDS.forEach(function (section) {
-    appendSectionHeading(body, section.title);
-    section.fields.forEach(function (pair) {
-      appendKeyValue(body, pair[1], data[pair[0]]);
-    });
-  });
+  buildSkillsSection(body, data);
+  buildReferenceSection(body, data);
+  buildOtherInfoSection(body, data);
 
-  appendSectionHeading(body, 'ประวัติการศึกษา / Academic Background');
-  var anyEducation = false;
-  EDUCATION_LEVELS.forEach(function (levelLabel, i) {
-    var hasAny = EDUCATION_COLS.some(function (col) { return data['edu_' + i + '_' + col]; });
-    if (!hasAny) return;
-    anyEducation = true;
-    body.appendParagraph(levelLabel).setBold(true);
-    EDUCATION_COLS.forEach(function (col, ci) {
-      appendKeyValue(body, EDUCATION_COL_LABELS[ci], data['edu_' + i + '_' + col]);
-    });
-  });
-  if (!anyEducation) body.appendParagraph('- ไม่มีข้อมูล / None -').setItalic(true);
-
-  appendSectionHeading(body, 'ประวัติการทำงาน / Work Experience');
-  appendDynamicTable(body, data, 'workTable', WORK_COLS);
-
-  appendSectionHeading(body, 'ประวัติการฝึกอบรม / Training');
-  appendDynamicTable(body, data, 'trainingTable', TRAINING_COLS);
-
-  appendSectionHeading(body, 'ความสามารถด้านภาษา / Language Proficiency');
-  var anyLanguage = false;
-  LANGUAGES.forEach(function (langLabel, i) {
-    var name = data['lang_' + i + '_name'] || langLabel;
-    var native = data['lang_' + i + '_native'];
-    var skillParts = LANG_SKILLS.map(function (skill) {
-      var val = data['lang_' + i + '_' + skill];
-      return val ? LANG_SKILL_LABELS[skill] + ': ' + val : null;
-    }).filter(Boolean);
-    if (!native && skillParts.length === 0) return;
-    anyLanguage = true;
-    body.appendParagraph(name + (native ? ' (เจ้าของภาษา)' : '')).setBold(true);
-    if (skillParts.length) body.appendParagraph(skillParts.join(' | '));
-  });
-  if (!anyLanguage) body.appendParagraph('- ไม่มีข้อมูล / None -').setItalic(true);
-
-  appendSectionHeading(body, 'บุคคลอ้างอิง / References');
-  appendDynamicTable(body, data, 'referenceTable', REFERENCE_COLS);
-
-  appendSectionHeading(body, 'ข้อมูลอื่นๆ / Other Information');
-  QUESTIONS.forEach(function (q) {
-    var answer = data[q[0]] || '-';
-    var detail = data[q[0] + '_detail'];
-    appendKeyValue(body, q[1], answer + (detail ? ' (' + detail + ')' : ''));
-  });
+  buildCertificationSection(body, data);
+  buildOfficeUseSection(body);
 
   doc.saveAndClose();
 
@@ -238,6 +222,22 @@ function createApplicationDoc(data) {
     DriveApp.getRootFolder().removeFile(file);
   }
   return doc;
+}
+
+// ---------- ส่วนหัวเอกสาร / Header ----------
+
+function buildHeaderSection(body, data, timestamp) {
+  body.appendParagraph('ใบสมัครงาน').setHeading(DocumentApp.ParagraphHeading.TITLE).setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  body.appendParagraph('Application for Employment - divana').setAlignment(DocumentApp.HorizontalAlignment.CENTER).setItalic(true);
+  body.appendParagraph('บันทึกเมื่อ / Submitted: ' + timestamp).setItalic(true);
+
+  appendApplicantPhoto(body, data);
+
+  body.appendParagraph(
+    '"โปรดกรอกข้อมูลให้ครบถ้วนตามความเป็นจริง เพื่อประโยชน์ของผู้สมัครงาน บริษัทฯ จะเก็บข้อมูลนี้เป็นความลับ ' +
+      'ตามกฎหมาย พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล และเป็นไปตามวัตถุประสงค์ของบริษัทฯ"'
+  ).setItalic(true);
+  body.appendParagraph('ข้าพเจ้าผู้สมัครงาน ขอให้ข้อมูลส่วนบุคคลของข้าพเจ้าตามความเป็นจริงดังต่อไปนี้').setItalic(true);
 }
 
 function appendApplicantPhoto(body, data) {
@@ -257,18 +257,292 @@ function appendApplicantPhoto(body, data) {
   }
 }
 
+// ---------- ตำแหน่งที่ต้องการสมัคร / Position ----------
+
+function buildPositionSection(body, data) {
+  appendFormRow(body, [
+    { label: 'ตำแหน่งที่ต้องการสมัคร / Position Applied', value: data.positionApplied },
+    { label: 'เงินเดือนที่ต้องการ / Expected Salary', value: data.expectedSalary },
+    { label: 'วันที่สามารถเริ่มงานได้ / Date Available for Employment', value: data.dateAvailable },
+  ]);
+}
+
+// ---------- ข้อมูลส่วนบุคคล / Personal Data ----------
+
+function buildPersonalDataSection(body, data) {
+  appendSectionHeading(body, 'ข้อมูลส่วนบุคคล / Personal Data');
+
+  var thaiName = [data.titleThai, data.firstNameThai, data.lastNameThai].filter(Boolean).join(' ');
+  var englishName = [data.titleEnglish, data.firstNameEnglish, data.lastNameEnglish].filter(Boolean).join(' ');
+
+  appendFormRow(body, [
+    { label: 'ชื่อ-สกุล (ภาษาไทย) / Name-Surname (Thai)', value: thaiName },
+    { label: 'ชื่อเล่น / Nickname', value: data.nickname },
+  ]);
+  appendFormRow(body, [
+    { label: 'Name-Surname (English)', value: englishName },
+  ]);
+  appendFormRow(body, [
+    { label: 'เลขบัตรประจำตัวประชาชน/Passport No. / ID / Passport No.', value: data.idNo },
+    { label: 'วันหมดอายุ / Expiry Date', value: data.idExpiry },
+  ]);
+  appendFormRow(body, [
+    { label: 'วัน เดือน ปี เกิด / Date of Birth', value: data.dob },
+    { label: 'อายุ / Age', value: data.age },
+    { label: 'สัญชาติ / Citizenship', value: data.citizenship },
+  ]);
+  appendFormRow(body, [
+    { label: 'ศาสนา / Religion', value: data.religion },
+    { label: 'ส่วนสูง / Height (cm)', value: data.height },
+    { label: 'น้ำหนัก / Weight (kg)', value: data.weight },
+  ]);
+  appendFormRow(body, [
+    { label: 'จังหวัดที่เกิด / Province of Birth', value: data.birthProvince },
+    { label: 'ประเทศที่เกิด / Country of Birth', value: data.birthCountry },
+  ]);
+  appendFormRow(body, [
+    { label: 'เบอร์โทรศัพท์ / Mobile No.', value: data.mobile },
+    { label: 'อีเมล์ / Email', value: data.email },
+  ]);
+}
+
+// ---------- สถานภาพ / Military, Marital, Children ----------
+
+function buildStatusSection(body, data) {
+  appendSectionHeading(body, 'สถานภาพการรับราชการทหาร / Military Status');
+  body.appendParagraph(checkboxLine(MILITARY_OPTIONS, data.militaryStatus));
+
+  appendSectionHeading(body, 'สถานภาพสมรส / Marital Status');
+  var maritalLine = checkboxLine(MARITAL_OPTIONS, data.maritalStatus);
+  if (data.maritalStatus === 'other' && data.maritalStatusOther) {
+    maritalLine += '  (' + data.maritalStatusOther + ')';
+  }
+  body.appendParagraph(maritalLine);
+
+  appendFormRow(body, [
+    { label: 'คู่สมรส ชื่อ-สกุล / Spouse\'s Name-Surname', value: data.spouseName },
+    { label: 'เบอร์ติดต่อ / Contact No.', value: data.spouseContact },
+  ]);
+
+  appendFormRow(body, [
+    { label: 'บุตรคนที่ 1 ชื่อ-สกุล / Child 1 Name-Surname', value: data.child1Name },
+    { label: 'อายุ / Age', value: data.child1Age },
+  ]);
+  appendFormRow(body, [
+    { label: 'บุตรคนที่ 2 ชื่อ-สกุล / Child 2 Name-Surname', value: data.child2Name },
+    { label: 'อายุ / Age', value: data.child2Age },
+  ]);
+  appendFormRow(body, [
+    { label: 'บุตรคนที่ 3 ชื่อ-สกุล / Child 3 Name-Surname', value: data.child3Name },
+    { label: 'อายุ / Age', value: data.child3Age },
+  ]);
+}
+
+// ---------- ที่อยู่ / Address ----------
+
+function buildAddressSection(body, data) {
+  appendSectionHeading(body, 'ที่อยู่ปัจจุบัน / Present Address');
+  appendFormRow(body, [
+    { label: 'บ้านเลขที่ / House No.', value: data.presentHouseNo },
+    { label: 'ถนน / ซอย / Street', value: data.presentStreet },
+  ]);
+  appendFormRow(body, [
+    { label: 'ตำบล / แขวง / Sub-district', value: data.presentSubdistrict },
+    { label: 'อำเภอ / เขต / District', value: data.presentDistrict },
+  ]);
+  appendFormRow(body, [
+    { label: 'จังหวัด / Province', value: data.presentProvince },
+    { label: 'รหัสไปรษณีย์ / Post Code', value: data.presentPostcode },
+    { label: 'ประเทศ / Country', value: data.presentCountry },
+  ]);
+
+  appendSectionHeading(body, 'ที่อยู่ตามทะเบียนบ้าน / Registered Address');
+  appendFormRow(body, [
+    { label: 'บ้านเลขที่ / House No.', value: data.regHouseNo },
+    { label: 'ถนน / ซอย / Street', value: data.regStreet },
+  ]);
+  appendFormRow(body, [
+    { label: 'ตำบล / แขวง / Sub-district', value: data.regSubdistrict },
+    { label: 'อำเภอ / เขต / District', value: data.regDistrict },
+  ]);
+  appendFormRow(body, [
+    { label: 'จังหวัด / Province', value: data.regProvince },
+    { label: 'รหัสไปรษณีย์ / Post Code', value: data.regPostcode },
+    { label: 'ประเทศ / Country', value: data.regCountry },
+  ]);
+}
+
+function buildEmergencyContactSection(body, data) {
+  appendSectionHeading(body, 'บุคคลที่ติดต่อได้กรณีฉุกเฉิน / In Case of Emergency, Please Notify');
+  appendFormRow(body, [
+    { label: 'ชื่อ-สกุล / Name-Surname', value: data.emergencyName },
+    { label: 'ความสัมพันธ์ / Relationship', value: data.emergencyRelationship },
+    { label: 'เบอร์โทรศัพท์ / Mobile No.', value: data.emergencyMobile },
+  ]);
+}
+
+// ---------- ประวัติการศึกษา / Academic Background ----------
+
+function buildEducationSection(body, data) {
+  appendSectionHeading(body, 'ประวัติการศึกษา / Academic Background');
+  var tableData = [EDUCATION_HEADER];
+  EDUCATION_LEVELS.forEach(function (levelLabel, i) {
+    var row = [levelLabel];
+    EDUCATION_COLS.forEach(function (col) {
+      row.push(data['edu_' + i + '_' + col] || '-');
+    });
+    tableData.push(row);
+  });
+  var table = body.appendTable(tableData);
+  table.getRow(0).editAsText().setBold(true);
+}
+
+function buildWorkExperienceSection(body, data) {
+  appendSectionHeading(body, 'ประวัติการทำงาน / Work Experience');
+  body.appendParagraph('เรียงจากปัจจุบันไปจนถึงที่ทำงานแรก / List Your Full-Time Employment Experiences with The Most Recent First').setItalic(true);
+  appendDynamicTable(body, data, 'workTable', WORK_HEADER);
+}
+
+function buildTrainingSection(body, data) {
+  appendSectionHeading(body, 'ประวัติการฝึกอบรม / Training');
+  appendDynamicTable(body, data, 'trainingTable', TRAINING_HEADER);
+}
+
+// ---------- ทักษะและความสามารถ / Skill and Abilities ----------
+
+function buildSkillsSection(body, data) {
+  appendSectionHeading(body, 'ทักษะและความสามารถ / Skill and Abilities');
+
+  body.appendParagraph('ความสามารถด้านภาษา / Language Proficiency').setHeading(DocumentApp.ParagraphHeading.HEADING3);
+  var langTableData = [LANG_HEADER];
+  LANGUAGES.forEach(function (langLabel, i) {
+    var name = data['lang_' + i + '_name'] || langLabel;
+    var native = data['lang_' + i + '_native'] ? '✓' : '-';
+    var row = [name, native];
+    LANG_SKILLS.forEach(function (skill) {
+      var val = data['lang_' + i + '_' + skill];
+      row.push(val ? LANG_LEVEL_LABELS[val] || val : '-');
+    });
+    langTableData.push(row);
+  });
+  var langTable = body.appendTable(langTableData);
+  langTable.getRow(0).editAsText().setBold(true);
+
+  body.appendParagraph('ความสามารถด้านอื่นๆ / Other Abilities').setHeading(DocumentApp.ParagraphHeading.HEADING3);
+  appendFormRow(body, [{ label: 'ความสามารถด้านคอมพิวเตอร์ / Computer Program', value: data.computerSkills }]);
+  appendFormRow(body, [{ label: 'ความสามารถด้านอื่นๆ / Other', value: data.otherAbilities }]);
+
+  body.appendParagraph('ความสามารถในการขับขี่ / Driving Ability').setHeading(DocumentApp.ParagraphHeading.HEADING3);
+  appendFormRow(body, [
+    { label: 'รถยนต์ / Car', value: checkboxLine(DRIVE_OPTIONS, data.canDriveCar) },
+    { label: 'เลขใบขับขี่ / Driving License No.', value: data.carLicenseNo },
+  ]);
+  appendFormRow(body, [
+    { label: 'รถจักรยานยนต์ / Motorcycle', value: checkboxLine(DRIVE_OPTIONS, data.canDriveMotorcycle) },
+    { label: 'เลขใบขับขี่ / Driving License No.', value: data.motorcycleLicenseNo },
+  ]);
+}
+
+function buildReferenceSection(body, data) {
+  appendSectionHeading(body, 'บุคคลอ้างอิง / Reference (Former Colleagues or Friend)');
+  appendDynamicTable(body, data, 'referenceTable', REFERENCE_HEADER);
+}
+
+function buildOtherInfoSection(body, data) {
+  appendSectionHeading(body, 'ข้อมูลอื่นๆ / Other Information');
+  var tableData = [['คำถาม\nQuestion', 'คำตอบ\nAnswer', 'โปรดระบุรายละเอียด\nPlease Give Particulars']];
+  QUESTIONS.forEach(function (q) {
+    var answer = checkboxLine(q.options, data[q.key]);
+    var detail = data[q.key + '_detail'] || '-';
+    tableData.push([q.th + '\n' + q.en, answer, detail]);
+  });
+  var table = body.appendTable(tableData);
+  table.getRow(0).editAsText().setBold(true);
+}
+
+// ---------- การรับรองข้อมูล / Certification ----------
+
+function buildCertificationSection(body, data) {
+  appendSectionHeading(body, 'การรับรองข้อมูล / Certification');
+  body.appendParagraph(
+    'ข้าพเจ้าขอรับรองว่า ข้อความที่ได้กรอกในใบสมัครนี้หรือเอกสารอื่นใดที่เกี่ยวกับการสมัครงานนี้ เป็นความจริงทุกประการ ' +
+      'หากปรากฏในภายหลังว่าข้าพเจ้าปกปิด และหรือให้ข้อมูลเท็จ ข้าพเจ้ายินดีให้บริษัทฯ พิจารณาเลิกจ้างข้าพเจ้าโดยทันที ' +
+      'โดยไม่ต้องจ่ายค่าชดเชยและค่าเสียหายใดๆ ทั้งสิ้น และถ้าบริษัทฯ ได้รับความเสียหายด้วยประการใดๆ ในกรณีนี้ ' +
+      'ข้าพเจ้ายินยอมที่จะชดใช้ค่าเสียหายนั้นๆ แก่บริษัทฯ จนครบถ้วน โดยไม่ยกข้อต่อสู้ใดๆ ขึ้นได้แม้แต่กับบริษัทฯ เป็นอันขาด'
+  );
+  body.appendParagraph(
+    'I certify that the given information and document are true and correct. I acknowledge that a proven of false ' +
+      'information or document, the company has right to terminate my employment immediately without compensation or ' +
+      'severance pay. I agree to compensate the company for any damage incurred from the provision of the false information.'
+  ).setItalic(true);
+
+  body.appendParagraph('( ' + (data.signature || '') + ' )').setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
+  body.appendParagraph('ผู้สมัคร (ลงชื่อ) Applicant\'s Signature').setAlignment(DocumentApp.HorizontalAlignment.RIGHT).setItalic(true);
+}
+
+function buildOfficeUseSection(body) {
+  appendSectionHeading(body, 'สำหรับฝ่ายบริหารทรัพยากรมนุษย์ / For Office Use Only');
+  body.appendParagraph('☐ divana wellness Company Limited    ☐ divana Global Company Limited    ☐ Other ..........................');
+  appendFormRow(body, [
+    { label: 'Interview Date', value: '' },
+    { label: 'Interview by', value: '' },
+  ]);
+  appendFormRow(body, [
+    { label: 'Position', value: '' },
+    { label: 'Department/Branch', value: '' },
+  ]);
+  body.appendParagraph('Interview Result   ☐ Pass    ☐ Not Pass');
+  appendFormRow(body, [
+    { label: 'Base Salary', value: '' },
+    { label: 'Other Allowance (If any)', value: '' },
+  ]);
+  appendFormRow(body, [
+    { label: 'Commence Date', value: '' },
+    { label: 'Report to', value: '' },
+  ]);
+  appendFormRow(body, [
+    { label: 'Comment (HR Officer)', value: '' },
+    { label: 'Comment (HR Manager)', value: '' },
+  ]);
+  appendFormRow(body, [
+    { label: 'HR Officer / Date', value: '' },
+    { label: 'HR Manager / Date', value: '' },
+  ]);
+}
+
+// ---------- Helpers ----------
+
 function appendSectionHeading(body, text) {
   body.appendParagraph(text).setHeading(DocumentApp.ParagraphHeading.HEADING2);
 }
 
-function appendKeyValue(body, label, value) {
-  if (value === undefined || value === null || value === '') return;
-  var p = body.appendParagraph('');
-  p.appendText(label + ': ').setBold(true);
-  p.appendText(String(value));
+function checkboxLine(options, selectedValue) {
+  return options
+    .map(function (opt) {
+      return (selectedValue === opt.value ? '☑' : '☐') + ' ' + opt.th + ' ' + opt.en;
+    })
+    .join('     ');
 }
 
-function appendDynamicTable(body, data, prefix, colLabels) {
+// สร้างหนึ่งแถวของฟอร์ม (ตาราง 1 แถว หลายคอลัมน์) โดย label เป็นตัวหนา ค่าอยู่บรรทัดถัดไป
+function appendFormRow(body, cellSpecs) {
+  var texts = cellSpecs.map(function (c) {
+    return c.label + '\n' + (c.value === undefined || c.value === null || c.value === '' ? '-' : String(c.value));
+  });
+  var table = body.appendTable([texts]);
+  var row = table.getRow(0);
+  cellSpecs.forEach(function (c, i) {
+    var labelLen = c.label.length;
+    if (labelLen > 0) {
+      var text = row.getCell(i).editAsText();
+      text.setBold(0, labelLen - 1, true);
+      text.setFontSize(0, labelLen - 1, 9);
+    }
+  });
+  return table;
+}
+
+function appendDynamicTable(body, data, prefix, header) {
   var rows = {};
   var re = new RegExp('^' + prefix + '_(\\d+)_(\\d+)$');
   Object.keys(data).forEach(function (key) {
@@ -279,17 +553,25 @@ function appendDynamicTable(body, data, prefix, colLabels) {
     rows[rowIdx] = rows[rowIdx] || {};
     rows[rowIdx][colIdx] = data[key];
   });
+  var colCount = header.length;
   var rowIndexes = Object.keys(rows).map(Number).sort(function (a, b) { return a - b; });
-  var tableData = [colLabels];
+  var tableData = [header];
   rowIndexes.forEach(function (idx) {
-    var hasRowData = colLabels.some(function (_, ci) { return rows[idx][ci]; });
+    var hasRowData = false;
+    for (var ci = 0; ci < colCount; ci++) {
+      if (rows[idx][ci]) { hasRowData = true; break; }
+    }
     if (!hasRowData) return;
-    tableData.push(colLabels.map(function (_, ci) { return rows[idx][ci] || ''; }));
+    var row = [];
+    for (var c = 0; c < colCount; c++) row.push(rows[idx][c] || '');
+    tableData.push(row);
   });
   if (tableData.length > 1) {
-    body.appendTable(tableData);
+    var table = body.appendTable(tableData);
+    table.getRow(0).editAsText().setBold(true);
   } else {
-    body.appendParagraph('- ไม่มีข้อมูล / None -').setItalic(true);
+    var table2 = body.appendTable([header, header.map(function () { return '-'; })]);
+    table2.getRow(0).editAsText().setBold(true);
   }
 }
 

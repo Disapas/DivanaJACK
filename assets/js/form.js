@@ -252,9 +252,9 @@
         const toField = document.getElementById(toId);
         if (checkbox.checked) {
           toField.value = document.getElementById(fromId).value;
-          toField.disabled = true;
+          toField.readOnly = true;
         } else {
-          toField.disabled = false;
+          toField.readOnly = false;
         }
       });
     });
